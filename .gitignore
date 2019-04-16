@@ -1,0 +1,7 @@
+.DS_Store
+.vscode/*
+dist/*
+build/*
+questrade/__pycache__/*
+*.egg-info/
+*.pyc
