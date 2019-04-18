@@ -27,7 +27,7 @@ class MappedAddress(Attribute):
     def _parse_buffer(self, buffer):
         self._family = StunMappedAddressFamily(buffer[1:2])
         self._port = int.from_bytes(buffer[2:4], byteorder='big')
-        self._ip = _IPAddress.by_family(self._family.value, buffer[4:8])
+        self._ip = _IPAddress.by_family(self._family.value, buffer[4:self._length])
         return {
             'family': self._family.name,
             'ip': self._ip.value,

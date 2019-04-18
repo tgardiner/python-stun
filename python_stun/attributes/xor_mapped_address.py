@@ -51,7 +51,7 @@ class XORMappedAddress(Attribute):
     def _parse_buffer(self, buffer):
         self._family = StunMappedAddressFamily(buffer[1:2])
         self._port = self._decode_port(buffer[2:4])
-        self._ip = self._decode_ip_addr(buffer[4:8])
+        self._ip = self._decode_ip_addr(buffer[4:self._length])
         return {
             'family': self._family.name,
             'ip': self._ip.value,
