@@ -1,3 +1,8 @@
+from .attributes import (
+    attribute,
+    mapped_address,
+    xor_mapped_address
+)
 from .request import request
 from .message import StunMessage
 from .enumerations import (
@@ -5,11 +10,14 @@ from .enumerations import (
     StunErrorCode, StunPort, StunsPort
 )
 __all__ = [
+    'attribute',
+    'mapped_address',
+    'xor_mapped_address',
     'request',
     'StunMessage',
     'StunMessageType',
     'StunMagicCookie',
-    'StunAttribute',
+    'StunAttributeType',
     'StunErrorCode',
     'StunPort',
     'StunsPort'

@@ -1,9 +1,9 @@
 import random
-from .attributes import Attribute
+from .attributes.attribute import Attribute
 from .enumerations import StunMessageType, StunMagicCookie, StunAttributeType
 
 
-def parse_attributes(buffer):
+def _parse_attributes(buffer):
     attributes = {}
     i = 0
     while i < len(buffer):
@@ -25,17 +25,17 @@ def parse_attributes(buffer):
     return attributes
 
 
-def generate_transaction_id():
+def _generate_transaction_id():
     return random.getrandbits(96).to_bytes(12, byteorder='big')
 
 
-def build_message(msg_type, transactionId, attributes):
-    raw_bytes = msg_type.value
-    raw_bytes += len(attributes).to_bytes(2, byteorder='big')
-    raw_bytes += StunMagicCookie.FULL.value
-    raw_bytes += transactionId
-    raw_bytes += attributes
-    return raw_bytes
+def _build_message_buffer(msg_type, transactionId, attributes):
+    buffer = msg_type.value
+    buffer += len(attributes).to_bytes(2, byteorder='big')
+    buffer += StunMagicCookie.FULL.value
+    buffer += transactionId
+    buffer += attributes
+    return buffer
 
 
 class StunMessage:
@@ -43,14 +43,14 @@ class StunMessage:
         self._buffer = buffer
         self._header_buffer = self._buffer[0:20]
         self._attribute_buffer = self._buffer[20:]
-        self._attributes = parse_attributes(self._attribute_buffer)
+        self._attributes = _parse_attributes(self._attribute_buffer)
 
     @classmethod
     def create(cls, **kwargs):
         msg_type = kwargs.get('type', StunMessageType.REQUEST)
-        transactionId = kwargs.get('transactionId', generate_transaction_id())
+        transactionId = kwargs.get('transactionId', _generate_transaction_id())
         attributes = kwargs.get('attributes', b'')
-        buffer = build_message(msg_type, transactionId, attributes)
+        buffer = _build_message_buffer(msg_type, transactionId, attributes)
         return cls(buffer)
 
     @property
