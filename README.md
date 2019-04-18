@@ -1,5 +1,5 @@
-# stunclient
-Python3 RFC 5389 STUN Client Implementation
+# python_stun
+Python3 RFC 5389 STUN Implementation
 
 ## Installation
 * Use `pip`/`pip3`:
