@@ -3,7 +3,9 @@ from .attributes.attribute import Attribute
 from .enumerations import StunMessageType, StunMagicCookie, StunAttributeType
 
 
-def _parse_attributes(buffer):
+def _parse_attribute_buffer(buffer, transaction_id):
+    # use instead something like attribute.from_buffer() where it reads the len and then slices
+    # its own buffer out to create and return the attribute
     attributes = {}
     i = 0
     while i < len(buffer):
@@ -18,7 +20,7 @@ def _parse_attributes(buffer):
             print('unknown type: ' + attr_type.hex())  # TODO: remove this
             pass
         else:
-            attribute = Attribute.by_type(attr_type, attr_len, attr_value)
+            attribute = Attribute.by_type(attr_type, attr_len, attr_value, transaction_id)
             if attribute.type not in attributes:
                 attributes[attribute.type] = attribute.value
         i += 4 + attr_len
@@ -29,11 +31,11 @@ def _generate_transaction_id():
     return random.getrandbits(96).to_bytes(12, byteorder='big')
 
 
-def _build_message_buffer(msg_type, transactionId, attributes):
+def _build_message_buffer(msg_type, transaction_id, attributes):
     buffer = msg_type.value
     buffer += len(attributes).to_bytes(2, byteorder='big')
     buffer += StunMagicCookie.FULL.value
-    buffer += transactionId
+    buffer += transaction_id
     buffer += attributes
     return buffer
 
@@ -43,7 +45,7 @@ class StunMessage:
         self._buffer = buffer
         self._header_buffer = self._buffer[0:20]
         self._attribute_buffer = self._buffer[20:]
-        self._attributes = _parse_attributes(self._attribute_buffer)
+        self._attributes = _parse_attribute_buffer(self._attribute_buffer, self.transaction_id)
 
     @classmethod
     def create(cls, **kwargs):
@@ -62,7 +64,7 @@ class StunMessage:
         return int.from_bytes(self._buffer[2:4], byteorder='big')
 
     @property
-    def transactionId(self):
+    def transaction_id(self):
         return int.from_bytes(self._buffer[8:20], byteorder='big')
 
     @property

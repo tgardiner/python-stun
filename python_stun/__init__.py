@@ -3,7 +3,7 @@ from .attributes import (
     mapped_address,
     xor_mapped_address
 )
-from .request import request
+from .request import request, request6
 from .message import StunMessage
 from .enumerations import (
     StunMessageType, StunMagicCookie, StunAttributeType,
@@ -14,6 +14,7 @@ __all__ = [
     'mapped_address',
     'xor_mapped_address',
     'request',
+    'request6',
     'StunMessage',
     'StunMessageType',
     'StunMagicCookie',

@@ -11,20 +11,21 @@ class Attribute:
     # +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     #                     Format of STUN Attributes
     #             https://tools.ietf.org/html/rfc5389#page-31
-    def __init__(self, type, length, buffer):
+    def __init__(self, type, length, buffer, transaction_id):
         assert length == len(buffer)
         self._type = StunAttributeType(type).name
         self._length = length
         self._buffer = buffer
+        self._transaction_id = transaction_id
         self._value = self._parse_buffer(self._buffer)
 
     def _parse_buffer(self, buffer):
         return {}
 
     @classmethod
-    def by_type(cls, type, length, buffer):
+    def by_type(cls, type, length, buffer, transaction_id):
         classmap = {c.static_type: c for c in cls.__subclasses__()}
-        return classmap[type](type, length, buffer)
+        return classmap[type](type, length, buffer, transaction_id)
 
     @property
     def value(self):
